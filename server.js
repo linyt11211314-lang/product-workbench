@@ -229,7 +229,7 @@ app.post('/api/listing/generate', async (req, res) => {
 });
 
 /** GET /api/health —— 健康检查 */
-app.get('/api/health', (_req, res) => res.json({ ok: true, name: 'shiguangning-workbench' }));
+app.get('/api/health', (_req, res) => res.json({ ok: true, name: 'product-workbench' }));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

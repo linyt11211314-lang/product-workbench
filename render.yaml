@@ -1,4 +1,4 @@
-# Render Blueprint —— 一键部署「拾光柠工作台 · AI Listing 工坊」
+# Render Blueprint —— 一键部署「拾光柠 · 产品开发工作台」（product-workbench）
 #
 # 部署方式（任选其一）：
 #   1) 把本仓库推到 GitHub / GitLab，在 Render 控制台选 "New" → "Blueprint"，选中本仓库即可自动按此文件部署；
@@ -13,7 +13,7 @@
 
 services:
   - type: web
-    name: shiguangning-workbench
+    name: product-workbench
     runtime: node
     plan: free
     buildCommand: npm install
