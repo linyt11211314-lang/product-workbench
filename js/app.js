@@ -7,31 +7,54 @@ import { esc } from './utils.js';
 import { hasApiKey, getSettings, maskedKey, applyTheme } from './store/settingsStore.js';
 import { onProjectsChange } from './store/projectStore.js';
 import { onProductsChange } from './store/productStore.js';
+import { getLock, verify } from './store/applockStore.js';
 import { render as renderHome } from './pages/home.js';
 import { render as renderLibrary } from './pages/library.js';
 import { render as renderListing } from './pages/listing.js';
 import { render as renderSettings } from './pages/settings.js';
+import { render as renderPricing } from './pages/pricing.js';
+import { render as renderCommission } from './pages/commission.js';
+import { render as renderRisk } from './pages/risk.js';
+import { render as renderAnalysis } from './pages/analysis.js';
+import { render as renderSchedule } from './pages/schedule.js';
+import { render as renderApplock } from './pages/applock.js';
 
 const NAV = [
   { id: 'home', label: '首页', icon: 'home' },
   { id: 'library', label: '选品库', icon: 'box' },
   { id: 'listing', label: 'AI Listing 工坊', icon: 'sparkles' },
+  { id: 'pricing', label: '智能定价', icon: 'target' },
+  { id: 'risk', label: '侵权扫描', icon: 'shield' },
+  { id: 'analysis', label: '数据分析', icon: 'chart' },
+  { id: 'commission', label: '佣金计算', icon: 'briefcase' },
+  { id: 'schedule', label: '排期任务', icon: 'calendar' },
+  { id: 'applock', label: '应用锁', icon: 'lock' },
   { id: 'settings', label: '设置', icon: 'settings' },
 ];
 
 const TITLES = {
-  home: { title: '首页', sub: '拾光柠工作台概览' },
+  home: { title: '首页', sub: '拾光柠 · 产品开发工作台概览' },
   library: { title: '选品库', sub: '产品素材管理 · 一键导入 Listing 工坊' },
   listing: { title: 'AI Listing 工坊', sub: '亚马逊产品开发内容生成中心' },
+  pricing: { title: '智能定价', sub: 'AED 售价测算 · 体积重/佣金/广告/退货/VAT' },
+  risk: { title: '侵权扫描', sub: '商标 / 外观专利 / 版权 / 关键词 / 目标国风险' },
+  analysis: { title: '数据分析', sub: '领星/产品表现导入 · 店铺-SKU 表现与风险' },
+  commission: { title: '佣金计算', sub: 'AE/SA 双站点提成预测与薪酬规划' },
+  schedule: { title: '排期任务', sub: '今日任务与上新排期' },
+  applock: { title: '应用锁', sub: '轻量防旁观' },
   settings: { title: '设置', sub: 'DeepSeek AI 服务与偏好' },
+};
+
+const PAGE_OF = {
+  home: 'home', library: 'library', listing: 'listing', settings: 'settings',
+  pricing: 'pricing', commission: 'commission', risk: 'risk', analysis: 'analysis',
+  schedule: 'schedule', applock: 'applock',
 };
 
 let currentRoute = 'home';
 
 function pageOf(route) {
-  if (route === 'home' || route === 'library' || route === 'settings') return route;
-  if (route.startsWith('listing')) return 'listing';
-  return 'home';
+  return PAGE_OF[route] || (route && route.startsWith('listing') ? 'listing' : 'home');
 }
 
 /** 全局路由跳转 */
@@ -99,7 +122,42 @@ function renderPage() {
   if (page === 'home') renderHome(container, ctx);
   else if (page === 'library') renderLibrary(container, ctx);
   else if (page === 'listing') renderListing(container, currentRoute, ctx);
+  else if (page === 'pricing') renderPricing(container, ctx);
+  else if (page === 'commission') renderCommission(container, ctx);
+  else if (page === 'risk') renderRisk(container, ctx);
+  else if (page === 'analysis') renderAnalysis(container, ctx);
+  else if (page === 'schedule') renderSchedule(container, ctx);
+  else if (page === 'applock') renderApplock(container, ctx);
   else if (page === 'settings') renderSettings(container, ctx);
+}
+
+/** 应用锁守卫：启用且本会话未解锁时，弹出全屏解锁层 */
+function guardAppLock() {
+  const lock = getLock();
+  if (!lock.enabled || window.__appUnlocked) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'app-lock-overlay';
+  overlay.innerHTML = `
+    <div class="app-lock-box">
+      <div class="logo-mark">🍋</div>
+      <div class="card-title">${icon('lock')} 应用已锁定</div>
+      <input class="input" id="lockPass" type="password" placeholder="输入密码解锁" />
+      <button class="btn btn-primary btn-sm" id="lockUnlock" style="width:100%">${icon('unlock')} 解锁</button>
+      <p class="muted" id="lockErr" style="color:#d9694e"></p>
+    </div>`;
+  document.body.appendChild(overlay);
+  const passEl = overlay.querySelector('#lockPass');
+  const tryUnlock = () => {
+    if (verify(passEl.value)) {
+      window.__appUnlocked = true;
+      overlay.remove();
+    } else {
+      overlay.querySelector('#lockErr').textContent = '密码错误';
+    }
+  };
+  overlay.querySelector('#lockUnlock').onclick = tryUnlock;
+  passEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+  passEl.focus();
 }
 
 /** 初始化 */
@@ -108,6 +166,7 @@ function init() {
   applyTheme();
   renderShell();
   renderPage();
+  guardAppLock();
 
   // 数据变化时联动刷新当前页
   const refresh = () => {

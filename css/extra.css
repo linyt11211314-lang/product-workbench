@@ -1,0 +1,59 @@
+/* 拾光柠工作台 · 扩展模块样式（定价/佣金/侵权/分析/排期/应用锁） */
+:root{
+  --bg:#F7F6F2; --card:#FFFFFF; --ink:#2c2a26; --muted:#8a8478;
+  --border:#ece8e0; --border-strong:#ddd6c8; --primary:#C7A25C; --primary-ink:#a9843f;
+  --radius:18px; --radius-md:12px; --radius-sm:8px; --shadow:0 6px 20px rgba(60,50,20,.06);
+}
+.muted{color:var(--muted);font-size:13px;line-height:1.6}
+.sub{font-weight:600;color:var(--primary-ink);font-size:13px;margin-bottom:2px}
+.row{display:flex;align-items:center;flex-wrap:wrap}
+.pos{color:#2f9e6f;font-weight:600}
+.neg{color:#d9694e;font-weight:600}
+
+.pricing-grid,.commission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 14px}
+.form-label{display:block;font-size:12px;color:var(--muted);margin:6px 0 4px}
+.input{width:100%;padding:9px 11px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--card);color:var(--ink);font-size:14px;box-sizing:border-box}
+.input:focus{outline:none;border-color:var(--primary)}
+
+.kv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:6px}
+.kv-grid>div{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px}
+.kv-grid span{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.kv-grid b{font-size:16px}
+
+.tier-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+.tier{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;text-align:center}
+.tier span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.tier b{font-size:18px;color:var(--primary-ink)}
+
+.seg{display:inline-flex;background:var(--bg);border:1px solid var(--border-strong);border-radius:999px;padding:3px}
+.seg-btn{border:none;background:transparent;padding:6px 14px;border-radius:999px;cursor:pointer;font-size:13px;color:var(--muted)}
+.seg-btn.active{background:var(--primary);color:#fff}
+
+.risk-badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600}
+.risk-badge.low{background:#e6f4ec;color:#2f9e6f}
+.risk-badge.medium{background:#fdf2dc;color:#bf8a1f}
+.risk-badge.high{background:#fbe4dd;color:#d9694e}
+.risk-badge.unknown{background:#eef0f2;color:#8a8478}
+.risk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:8px}
+.risk-grid>div{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px}
+.risk-grid b{color:var(--primary-ink);font-size:13px}
+.risk-grid p{margin:4px 0 0;font-size:13px;line-height:1.6;color:var(--ink)}
+.risk-suggest{margin:6px 0 0;padding-left:18px}
+.risk-suggest li{font-size:13px;line-height:1.8;color:var(--ink)}
+
+.history-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:8px;background:var(--card)}
+.history-row.done{opacity:.6}
+.history-row.done b{text-decoration:line-through}
+.check{display:inline-flex;align-items:center;gap:6px;font-size:13px}
+
+.table-wrap{overflow-x:auto;margin-top:6px}
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th,.data-table td{padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+.data-table th{color:var(--muted);font-weight:600;background:var(--bg)}
+.data-table tbody tr:hover{background:var(--bg)}
+
+/* 应用锁遮罩 */
+.app-lock-overlay{position:fixed;inset:0;background:rgba(40,36,28,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:9999}
+.app-lock-box{background:var(--card);border-radius:var(--radius);padding:28px;width:320px;box-shadow:var(--shadow);text-align:center}
+.app-lock-box .input{margin:14px 0 10px;text-align:center}
+.app-lock-box .logo-mark{font-size:34px}
