@@ -7,6 +7,8 @@ import { getSettings, saveSettings, saveTheme, hasApiKey, maskedKey } from '../s
 import { DEEPSEEK_MODELS, AMAZON_SITES, PER_SITE_RATES } from '../config.js';
 import { testConnection } from '../services/aiProvider.js';
 import { toastSuccess, toastError, toastInfo } from '../ui/toast.js';
+import { downloadBackup, parseBackupFile, summarizeBackup, applyBackup } from '../services/dataBackup.js';
+import { confirmDialog } from '../ui/modal.js';
 
 /** 主题色选项 */
 const THEME_OPTIONS = [
@@ -205,6 +207,24 @@ export function render(container, { rerender }) {
           <div>5. <b style="color:var(--text)">保存项目</b>：项目保存在本地浏览器，刷新后依然存在。</div>
         </div>
       </div>
+
+      <div class="card card-pad">
+        <div class="section-head" style="margin-bottom:6px">
+          <div style="width:44px;height:44px;border-radius:14px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;color:var(--primary-deep)">${icon('database')}</div>
+          <div>
+            <div class="section-title" style="font-size:16.5px">数据备份 / 迁移</div>
+            <div class="section-sub">导出全部本地数据为 JSON，换设备时再导入恢复（选品库 / Listing 项目 / 设置 / 统计）</div>
+          </div>
+        </div>
+        <div style="font-size:13px;line-height:1.85;color:var(--text-sub);margin-bottom:14px">
+          <div>· 数据仅保存在你当前浏览器，换电脑 / 换浏览器会丢失，建议定期备份。</div>
+          <div>· 导入为<strong>覆盖式</strong>：会用备份替换当前设备数据，导入前可先点「导出数据」留底。</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" data-backup-export>${icon('download')} 导出数据（JSON）</button>
+          <button class="btn btn-soft" data-backup-import>${icon('upload')} 导入数据（JSON）</button>
+        </div>
+      </div>
     </div>
   `;
 
@@ -398,4 +418,48 @@ export function render(container, { rerender }) {
     el.addEventListener('change', applyBatch);
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); applyBatch(); } });
   });
+
+  // ---------- 数据备份 / 迁移 ----------
+  // 隐藏的文件选择器（仅接受 JSON）
+  const backupFileInput = document.createElement('input');
+  backupFileInput.type = 'file';
+  backupFileInput.accept = 'application/json,.json';
+  backupFileInput.style.display = 'none';
+  container.appendChild(backupFileInput);
+
+  backupFileInput.addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = ''; // 允许重复选择同一文件
+    if (!file) return;
+    try {
+      const parsed = await parseBackupFile(file);
+      const s = summarizeBackup(parsed);
+      const lines = [
+        `${s.settings ? '✓' : '✗'} 设置 / API 配置`,
+        `✓ 选品库 ${s.products} 条`,
+        `✓ Listing 项目 ${s.projects} 条`,
+        `${s.stats ? '✓' : '✗'} 统计`,
+      ];
+      if (s.hasApiKey) lines.push('（含已保存的 DeepSeek API Key）');
+      confirmDialog({
+        title: '确认导入备份',
+        message: `即将用备份覆盖当前设备上的数据：\n\n${lines.join('\n')}\n\n覆盖后无法撤销，建议先「导出数据」留底。`,
+        confirmText: '覆盖导入',
+        danger: true,
+        onConfirm: () => {
+          applyBackup(parsed);
+          toastSuccess('导入成功，正在刷新…');
+          setTimeout(() => location.reload(), 600);
+        },
+      });
+    } catch (err) {
+      toastError(`导入失败：${err.message}`);
+    }
+  });
+
+  container.querySelector('[data-backup-export]').addEventListener('click', () => {
+    downloadBackup();
+    toastSuccess('已导出备份文件（JSON）到本地下载目录');
+  });
+  container.querySelector('[data-backup-import]').addEventListener('click', () => backupFileInput.click());
 }
