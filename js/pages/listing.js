@@ -401,7 +401,9 @@ function renderForm(container, { navigate }) {
         quote: prod.quote || null,
       };
       toastSuccess(`已导入「${prod.name}」，可继续补充卖点后生成`);
-      render(container, 'listing:new', { navigate, rerender: () => {} });
+      // 直接重绘表单，而不是重新走 route 渲染（后者会重置 state.formData）
+      container.innerHTML = '';
+      renderForm(container, { navigate });
     });
   });
 
