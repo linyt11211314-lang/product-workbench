@@ -1,0 +1,18 @@
+{
+  "name": "shiguangning-workbench",
+  "version": "1.0.0",
+  "description": "拾光柠工作台 · AI Listing工坊 — 亚马逊产品开发内容生成中心",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "xlsx": "^0.18.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

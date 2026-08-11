@@ -1,0 +1,27 @@
+# Render Blueprint —— 一键部署「拾光柠工作台 · AI Listing 工坊」
+#
+# 部署方式（任选其一）：
+#   1) 把本仓库推到 GitHub / GitLab，在 Render 控制台选 "New" → "Blueprint"，选中本仓库即可自动按此文件部署；
+#   2) 或直接在 Render 控制台 "New Web Service" → 连接仓库 → Build Command: npm install / Start Command: npm start。
+#
+# 说明：
+#   - 免费套餐（plan: free）会自动分配 *.onrender.com 域名，无需信用卡。
+#   - 前端用同源相对路径 /api/* 调用后端代理，因此部署后 AI 生成、连通性测试均可用。
+#   - 主工作台（AI Listing 工坊）的 DeepSeek Key 在浏览器「设置」页填写（存 localStorage），
+#     不需要服务端密钥；下方 DEEPSEEK_API_KEY 为可选项，仅「独立生成接口 /api/listing/generate」使用。
+#   - 免费套餐闲置 15 分钟后会休眠，首个请求冷启约 30 秒，属正常现象。
+
+services:
+  - type: web
+    name: shiguangning-workbench
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # 可选项：仅独立接口需要。留空即可，主工作台不依赖它。
+      - key: DEEPSEEK_API_KEY
+        sync: false

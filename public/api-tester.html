@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拾光柠 · Listing 接口测试台</title>
+<style>
+  :root {
+    --bg:#F7F6F2; --card:#fff; --border:#ECE9E0; --border-strong:#E1DDD2;
+    --text:#2E2C27; --text-sub:#8B887E; --text-faint:#B6B2A6;
+    --primary:#C7A25C; --primary-deep:#B08B3D; --primary-soft:#F5EBD6; --primary-border:#EADDBB;
+    --green:#7FA98F; --green-soft:#E8F1EA; --red:#C97B6D; --red-soft:#F8E9E6;
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:var(--font); background:var(--bg); color:var(--text); padding:34px 24px 60px; }
+  .wrap { max-width:880px; margin:0 auto; }
+  .head { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+  .head .logo { width:42px; height:42px; border-radius:13px; background:linear-gradient(150deg,#F7E8C3,#EAD9A8); display:flex; align-items:center; justify-content:center; font-size:21px; border:1px solid var(--primary-border); }
+  h1 { font-size:20px; font-weight:800; letter-spacing:.5px; }
+  .lede { font-size:12.5px; color:var(--text-sub); margin-bottom:22px; line-height:1.7; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:22px 24px; margin-bottom:16px; box-shadow:0 1px 2px rgba(46,44,39,.04),0 10px 28px rgba(46,44,39,.055); }
+  .card h2 { font-size:14.5px; font-weight:700; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .card h2 .tag { font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:6px; background:var(--primary-soft); color:var(--primary-deep); }
+  .field { margin-bottom:13px; }
+  .field label { display:block; font-size:12.5px; font-weight:600; margin-bottom:6px; }
+  .field label .req { color:var(--red); }
+  .field label .hint { font-weight:400; color:var(--text-faint); font-size:11px; }
+  input, textarea { width:100%; font-family:var(--font); font-size:13px; color:var(--text); background:var(--card); border:1px solid var(--border-strong); border-radius:11px; padding:10px 12px; outline:none; transition:border-color .15s,box-shadow .15s; }
+  input:focus, textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3.5px var(--primary-soft); }
+  textarea { resize:vertical; min-height:70px; line-height:1.55; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; }
+  .row .field { flex:1; min-width:200px; }
+  .btn-row { display:flex; gap:10px; align-items:center; margin-top:6px; flex-wrap:wrap; }
+  button { font-family:var(--font); font-size:13.5px; font-weight:600; border-radius:12px; padding:10px 18px; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:7px; transition:transform .1s,background .15s; }
+  button:active { transform:scale(.97); }
+  .btn-primary { background:var(--primary); color:#fff; box-shadow:0 4px 14px rgba(199,162,92,.32); }
+  .btn-primary:hover { background:var(--primary-deep); }
+  .btn-ghost { background:transparent; color:var(--text-sub); border-color:var(--border-strong); }
+  .btn-ghost:hover { background:#F4F1EA; color:var(--text); }
+  .endpoint { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; background:var(--primary-soft); color:var(--primary-deep); padding:7px 12px; border-radius:9px; margin-bottom:16px; border:1px solid var(--primary-border); word-break:break-all; }
+  .spinner { width:14px; height:14px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .result { background:#FBFAF6; border:1px solid var(--border); border-radius:13px; padding:15px 17px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; line-height:1.7; white-space:pre-wrap; word-break:break-all; max-height:480px; overflow:auto; }
+  .result.ok { border-color:#D5E4D9; background:var(--green-soft); }
+  .result.err { border-color:#EFDCD7; background:var(--red-soft); }
+  .result .k { color:var(--primary-deep); }
+  .result .v { color:var(--text); }
+  .hint-box { font-size:12px; color:var(--text-sub); line-height:1.8; }
+  .hint-box code { background:#F0EEE7; padding:1px 6px; border-radius:6px; font-family:ui-monospace,Menlo,monospace; font-size:11.5px; color:var(--primary-deep); }
+  .status { font-size:12px; font-weight:600; padding:6px 12px; border-radius:9px; }
+  .status.pending { background:var(--primary-soft); color:var(--primary-deep); }
+  .status.ok { background:var(--green-soft); color:var(--green); }
+  .status.err { background:var(--red-soft); color:var(--red); }
+  .sections { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px; }
+  .sec { background:#fff; border:1px solid var(--border); border-radius:12px; padding:13px 15px; }
+  .sec.full { grid-column:1/-1; }
+  .sec .t { font-size:12px; font-weight:700; color:var(--primary-deep); margin-bottom:7px; }
+  .sec .b { font-size:12px; line-height:1.65; color:var(--text-sub); white-space:pre-wrap; word-break:break-all; }
+  @media (max-width:640px) { .sections { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="logo">🍋</div>
+    <div>
+      <h1>Listing 接口测试台</h1>
+      <div style="font-size:11.5px;color:var(--text-sub);margin-top:2px">POST /api/listing/generate · DeepSeek 自动生成亚马逊 Listing</div>
+    </div>
+  </div>
+  <div class="lede">在浏览器里直接调用后端接口：填写产品信息 → 点击「调用接口」→ 查看结构化结果（标题 / 五点描述 / 产品描述 / 搜索关键词）。</div>
+
+  <div class="card">
+    <h2><span class="tag">POST</span> 请求参数</h2>
+    <div class="endpoint">https://<span id="host"></span>/api/listing/generate</div>
+    <div class="row">
+      <div class="field">
+        <label>产品名称 <span class="req">*</span></label>
+        <input id="product_name" placeholder="Mini Portable Blender USB Rechargeable">
+      </div>
+      <div class="field">
+        <label>材质 <span class="req">*</span></label>
+        <input id="material" placeholder="Food-grade Tritan + stainless steel blades">
+      </div>
+    </div>
+    <div class="field">
+      <label>核心卖点 <span class="req">*</span> <span class="hint">逗号分隔</span></label>
+      <textarea id="key_points" placeholder="USB-C charging, 350ml capacity, quiet motor, easy to clean, 30s blending"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="run">⚡ 调用接口</button>
+      <button class="btn-ghost" id="fill">填入示例</button>
+      <span class="status pending" id="status">等待调用</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="tag">JSON</span> 返回结果</h2>
+    <div class="result" id="result">（调用后显示结果）</div>
+  </div>
+
+  <div class="card">
+    <h2><span class="tag">?</span> 说明</h2>
+    <div class="hint-box">
+      · 该接口只接受 <code>POST</code> 请求（浏览器地址栏打开是 GET，会返回提示）<br>
+      · 接口从环境变量 <code>DEEPSEEK_API_KEY</code> 读取 Key，未配置时会返回对应提示<br>
+      · 返回格式：<code>{ code: 0, data: { title, bullet_points, description, search_terms }, message: "success" }</code><br>
+      · 等价 cURL：
+      <code>curl -X POST https://<span id="host2"></span>/api/listing/generate -H "Content-Type: application/json" -d '{"product_name":"...","material":"...","key_points":"..."}'</code>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('host').textContent = location.host;
+  document.getElementById('host2').textContent = location.host;
+
+  const example = {
+    product_name: 'Mini Portable Blender USB Rechargeable',
+    material: 'Food-grade Tritan + stainless steel blades',
+    key_points: 'USB-C charging, 350ml capacity, quiet motor, easy to clean, 30s blending'
+  };
+
+  document.getElementById('fill').addEventListener('click', () => {
+    document.getElementById('product_name').value = example.product_name;
+    document.getElementById('material').value = example.material;
+    document.getElementById('key_points').value = example.key_points;
+  });
+
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function renderResult(data) {
+    const el = document.getElementById('result');
+    el.className = 'result';
+    if (data.code === 0) {
+      el.classList.add('ok');
+      const d = data.data;
+      const terms = (d.search_terms || []).map(t => `"${esc(t)}"`).join(', ');
+      el.innerHTML = `<span class="k">code</span>: <span class="v">0</span>  <span class="k">message</span>: <span class="v">"success"</span>\n\n` +
+        `<span class="k">data.title</span>:\n<span class="v">${esc(d.title || '')}</span>\n\n` +
+        `<span class="k">data.bullet_points</span> (${(d.bullet_points||[]).length}):\n<span class="v">${(d.bullet_points||[]).map((b,i)=>`${i+1}. ${esc(b)}`).join('\n')}</span>\n\n` +
+        `<span class="k">data.description</span>:\n<span class="v">${esc(d.description || '')}</span>\n\n` +
+        `<span class="k">data.search_terms</span> (${(d.search_terms||[]).length}):\n<span class="v">[${terms}]</span>`;
+    } else {
+      el.classList.add('err');
+      el.innerHTML = `<span class="k">code</span>: <span class="v">${data.code}</span>  <span class="k">message</span>: <span class="v">"${esc(data.message || '')}"</span>`;
+    }
+  }
+
+  document.getElementById('run').addEventListener('click', async () => {
+    const body = {
+      product_name: document.getElementById('product_name').value.trim(),
+      material: document.getElementById('material').value.trim(),
+      key_points: document.getElementById('key_points').value.trim()
+    };
+    const missing = [];
+    if (!body.product_name) missing.push('产品名称');
+    if (!body.material) missing.push('材质');
+    if (!body.key_points) missing.push('核心卖点');
+    if (missing.length) {
+      const el = document.getElementById('result');
+      el.className = 'result err';
+      el.innerHTML = `<span class="k">请先填写</span>: <span class="v">${missing.join('、')}</span>`;
+      return;
+    }
+    const btn = document.getElementById('run');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> 调用中…';
+    const status = document.getElementById('status');
+    status.textContent = '调用中…';
+    status.className = 'status pending';
+    try {
+      const res = await fetch('/api/listing/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      renderResult(data);
+      status.textContent = data.code === 0 ? '✓ 成功' : '✕ 失败';
+      status.className = data.code === 0 ? 'status ok' : 'status err';
+    } catch (e) {
+      const el = document.getElementById('result');
+      el.className = 'result err';
+      el.innerHTML = `<span class="k">请求异常</span>: <span class="v">${esc(e.message)}</span>`;
+      status.textContent = '✕ 请求异常';
+      status.className = 'status err';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '⚡ 调用接口';
+    }
+  });
+</script>
+</body>
+</html>

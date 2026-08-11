@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>拾光柠工作台 · AI Listing工坊</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23F5EBD6'/%3E%3Cpath d='M32 14c-8 8-12 15-12 22a12 12 0 0 0 24 0c0-7-4-14-12-22z' fill='%23C7A25C'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <!-- Excel 导入导出（SheetJS，本地托管） -->
+  <script src="/vendor/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <!-- 左侧导航 -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">🍋</div>
+        <div class="logo-text">
+          <div class="logo-name">拾光柠</div>
+          <div class="logo-sub">AI Listing 工坊</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav"></nav>
+      <div class="sidebar-footer">
+        <div class="ai-status" id="aiStatusBadge">
+          <span class="ai-status-dot"></span>
+          <span class="ai-status-text">AI 服务检测中…</span>
+        </div>
+        <div class="version">v1.0 · 拾光柠出品</div>
+      </div>
+    </aside>
+
+    <!-- 主区域 -->
+    <main class="main">
+      <header class="topbar" id="topbar"></header>
+      <div class="page-content" id="pageContent"></div>
+    </main>
+  </div>
+
+  <!-- 弹窗 / 轻提示 -->
+  <div id="modalRoot"></div>
+  <div id="toastRoot"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

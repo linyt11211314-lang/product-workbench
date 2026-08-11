@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>拾光柠工作台 · AI Listing 工坊 · 成果预览</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
+         background: #F7F6F2; color: #2E2C27; padding: 30px 26px 60px; }
+  .container { max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 26px; font-weight: 800; letter-spacing: 1px; }
+  h1::before { content: "🍋"; margin-right: 10px; }
+  .lede { font-size: 13.5px; color: #8B887E; margin-top: 6px; line-height: 1.7; }
+  .meta { display: inline-flex; align-items: center; gap: 8px; margin: 14px 0 26px; padding: 8px 14px; background: #F5EBD6; color: #B08B3D; border-radius: 999px; font-size: 12.5px; font-weight: 600; border: 1px solid #EADDBB; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card { background: #fff; border: 1px solid #ECE9E0; border-radius: 18px; box-shadow: 0 1px 2px rgba(46,44,39,.04), 0 10px 28px rgba(46,44,39,.055); overflow: hidden; }
+  .card .hd { padding: 16px 22px; border-bottom: 1px solid #ECE9E0; display: flex; align-items: center; gap: 10px; }
+  .card .hd .tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: #F5EBD6; color: #B08B3D; }
+  .card .hd .title { font-size: 15px; font-weight: 700; }
+  .card .hd .sub { font-size: 12px; color: #8B887E; margin-left: 8px; }
+  .card .bd { padding: 16px 22px; }
+  .card img { width: 100%; border-radius: 12px; display: block; border: 1px solid #ECE9E0; }
+  .spec { margin-top: 30px; padding: 22px 26px; background: #FBFAF6; border: 1px solid #ECE9E0; border-radius: 18px; }
+  .spec h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 12px; }
+  .spec ul { list-style: none; font-size: 13px; line-height: 2.0; color: #2E2C27; }
+  .spec ul li::before { content: "✓ "; color: #7FA98F; font-weight: 700; margin-right: 6px; }
+  .spec-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 12px; }
+  .spec-card { padding: 14px; background: #fff; border-radius: 12px; border: 1px solid #ECE9E0; font-size: 12.5px; color: #8B887E; line-height: 1.6; }
+  .spec-card b { color: #2E2C27; font-size: 13px; display: block; margin-bottom: 4px; }
+  .cta { margin-top: 22px; padding: 14px 18px; background: #fff; border: 1px solid #EADDBB; border-radius: 14px; font-size: 13px; color: #8B887E; line-height: 1.8; }
+  .cta code { background: #F0EEE7; padding: 2px 6px; border-radius: 6px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #B08B3D; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>拾光柠工作台 · AI Listing 工坊</h1>
+  <div class="lede">亚马逊产品开发内容生成中心 · 全栈独立模块 · 严格延续拾光柠设计语言</div>
+  <div class="meta">🍋 全栈 · Express 后端代理 · DeepSeek 集成 · localStorage 持久化</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="hd"><span class="tag">首页</span><span class="title">工作台首页</span><span class="sub">· 指标卡固定不滚动</span></div>
+      <div class="bd"><img src="preview-assets/shot_home_with_data.png" alt=""></div>
+    </div>
+    <div class="card">
+      <div class="hd"><span class="tag">选品库</span><span class="title">产品素材管理</span><span class="sub">· 一键导入 Listing 工坊</span></div>
+      <div class="bd"><img src="preview-assets/shot_library_with_data.png" alt=""></div>
+    </div>
+    <div class="card">
+      <div class="hd"><span class="tag">工坊</span><span class="title">AI Listing 项目列表</span><span class="sub">· 持久化 · 状态可视化</span></div>
+      <div class="bd"><img src="preview-assets/shot_listing_with_data.png" alt=""></div>
+    </div>
+    <div class="card">
+      <div class="hd"><span class="tag">创建</span><span class="title">产品信息表单</span><span class="sub">· 必填校验 · 可选高级选项</span></div>
+      <div class="bd"><img src="preview-assets/shot_listing_form.png" alt=""></div>
+    </div>
+    <div class="card">
+      <div class="hd"><span class="tag">结果</span><span class="title">生成结果页</span><span class="sub">· 产品信息卡 + 标题/五点/描述/关键词</span></div>
+      <div class="bd"><img src="preview-assets/shot_result_page.png" alt=""></div>
+    </div>
+    <div class="card">
+      <div class="hd"><span class="tag">设置</span><span class="title">DeepSeek API Key</span><span class="sub">· 真实测试连接（验证了 DeepSeek API 401）</span></div>
+      <div class="bd"><img src="preview-assets/shot_test_fake_key.png" alt=""></div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <h3>架构 & 验收清单</h3>
+    <ul>
+      <li>架构分层：Listing 页面 → Listing Service → AI Provider → DeepSeek API（页面不直连）</li>
+      <li>后端代理 <code>/api/ai/generate</code> · <code>/api/ai/test</code> · <code>/api/competitor/fetch</code></li>
+      <li>AI 生成内容：标题（≤200字符 Amazon 规范）/ 五点描述 / Product Description / Search Terms（去重）/ 图片文案建议</li>
+      <li>竞品分析：URL 自动抓取 + 粘贴文本双通道，失败降级提示</li>
+      <li>数据持久化：localStorage；字段完整含 <code>productId/productInfo/title/bulletPoints/description/searchTerms/imageSuggestions/createdAt/updatedAt</code></li>
+      <li>错误处理：DeepSeek 失败不崩溃，toast 提示"AI 生成失败，请检查 AI 服务配置"</li>
+      <li>图片上传：点击选择 / Ctrl+V 粘贴 / 拖拽（自动压缩至最长边 1200px）</li>
+      <li>指标卡组 <code>height: 128px; flex-shrink: 0</code>，滚动后位置完全不变（top 86→86）</li>
+      <li>导航已剔除"摸鱼"和"亚马逊市场调研"模块</li>
+    </ul>
+
+    <div class="spec-grid">
+      <div class="spec-card"><b>设计语言</b>浅色背景 #F7F6F2 · 圆角卡片 18px · iOS 风格 · 低饱和柠黄 #C7A25C · SF Pro / PingFang</div>
+      <div class="spec-card"><b>多站点</b>US / UK / AE / DE / FR / IT / ES / JP / CA / AU / MX / SG · 按站点自动选择输出语言</div>
+      <div class="spec-card"><b>每分区独立操作</b>编辑 · 复制 · 单独重新生成 · 全部重新生成 · 复制全部</div>
+    </div>
+
+    <div class="cta">
+      <b>本地启动：</b>进入项目目录 <code>cd shiguangning-workbench</code>，先 <code>npm install</code>，再 <code>npm start</code>，浏览器访问 <code>http://localhost:3000</code>。<br>
+      <b>首次使用：</b>进入「设置」→ 填入 DeepSeek API Key（<code>platform.deepseek.com</code>）→ 点击「测试连接」验证 → 保存。然后在「AI Listing 工坊」创建项目即可。
+    </div>
+  </div>
+</div>
+</body>
+</html>
