@@ -100,6 +100,7 @@ function renderShell() {
 
 function renderPage() {
   const container = document.getElementById('pageContent');
+  console.log('[renderPage] route=', currentRoute, 'container=', !!container, 'childrenBefore=', container ? container.childElementCount : -1);
   try {
     container.innerHTML = '';
     const page = pageOf(currentRoute);
@@ -113,6 +114,7 @@ function renderPage() {
     else     if (page === 'analysis') renderAnalysis(container, ctx);
     else if (page === 'schedule') renderSchedule(container, ctx);
     else if (page === 'settings') renderSettings(container, ctx);
+    console.log('[renderPage] done. htmlLength=', container.innerHTML.length, 'childrenAfter=', container.childElementCount);
   } catch (err) {
     console.error('[renderPage] 页面渲染失败：', err);
     container.innerHTML = `

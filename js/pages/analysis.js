@@ -22,6 +22,7 @@ function pickName(row) {
 }
 
 export function render(container) {
+  console.log('[analysis] render start. container children=', container.childElementCount);
   container.innerHTML = `
     <div class="card">
       <div class="card-title">${icon('chart')} 店铺-SKU 数据分析</div>
@@ -33,6 +34,7 @@ export function render(container) {
     </div>
     <div id="a-result"></div>
   `;
+  console.log('[analysis] html set. length=', container.innerHTML.length);
 
   const $ = (id) => container.querySelector(id);
 
