@@ -14,7 +14,6 @@ import { render as renderListing } from './pages/listing.js';
 import { render as renderSettings } from './pages/settings.js';
 import { render as renderPricing } from './pages/pricing.js';
 import { render as renderCommission } from './pages/commission.js';
-import { render as renderRisk } from './pages/risk.js';
 import { render as renderAnalysis } from './pages/analysis.js';
 import { render as renderSchedule } from './pages/schedule.js';
 import { render as renderApplock } from './pages/applock.js';
@@ -24,7 +23,6 @@ const NAV = [
   { id: 'library', label: '选品库', icon: 'box' },
   { id: 'listing', label: 'AI Listing 工坊', icon: 'sparkles' },
   { id: 'pricing', label: '智能定价', icon: 'target' },
-  { id: 'risk', label: '侵权扫描', icon: 'shield' },
   { id: 'analysis', label: '数据分析', icon: 'chart' },
   { id: 'commission', label: '佣金计算', icon: 'briefcase' },
   { id: 'schedule', label: '排期任务', icon: 'calendar' },
@@ -37,7 +35,6 @@ const TITLES = {
   library: { title: '选品库', sub: '产品素材管理 · 一键导入 Listing 工坊' },
   listing: { title: 'AI Listing 工坊', sub: '亚马逊产品开发内容生成中心' },
   pricing: { title: '智能定价', sub: 'AED 售价测算 · 体积重/佣金/广告/退货/VAT' },
-  risk: { title: '侵权扫描', sub: '商标 / 外观专利 / 版权 / 关键词 / 目标国风险' },
   analysis: { title: '数据分析', sub: '领星/产品表现导入 · 店铺-SKU 表现与风险' },
   commission: { title: '佣金计算', sub: 'AE/SA 双站点提成预测与薪酬规划' },
   schedule: { title: '排期任务', sub: '今日任务与上新排期' },
@@ -47,7 +44,7 @@ const TITLES = {
 
 const PAGE_OF = {
   home: 'home', library: 'library', listing: 'listing', settings: 'settings',
-  pricing: 'pricing', commission: 'commission', risk: 'risk', analysis: 'analysis',
+  pricing: 'pricing', commission: 'commission', analysis: 'analysis',
   schedule: 'schedule', applock: 'applock',
 };
 
@@ -113,22 +110,33 @@ function renderShell() {
 
 function renderPage() {
   const container = document.getElementById('pageContent');
-  container.innerHTML = '';
-  const page = pageOf(currentRoute);
-  const ctx = {
-    navigate,
-    rerender: () => renderPage(),
-  };
-  if (page === 'home') renderHome(container, ctx);
-  else if (page === 'library') renderLibrary(container, ctx);
-  else if (page === 'listing') renderListing(container, currentRoute, ctx);
-  else if (page === 'pricing') renderPricing(container, ctx);
-  else if (page === 'commission') renderCommission(container, ctx);
-  else if (page === 'risk') renderRisk(container, ctx);
-  else if (page === 'analysis') renderAnalysis(container, ctx);
-  else if (page === 'schedule') renderSchedule(container, ctx);
-  else if (page === 'applock') renderApplock(container, ctx);
-  else if (page === 'settings') renderSettings(container, ctx);
+  try {
+    container.innerHTML = '';
+    const page = pageOf(currentRoute);
+    const ctx = {
+      navigate,
+      rerender: () => renderPage(),
+    };
+    if (page === 'home') renderHome(container, ctx);
+    else if (page === 'library') renderLibrary(container, ctx);
+    else if (page === 'listing') renderListing(container, currentRoute, ctx);
+    else if (page === 'pricing') renderPricing(container, ctx);
+    else if (page === 'commission') renderCommission(container, ctx);
+    else if (page === 'analysis') renderAnalysis(container, ctx);
+    else if (page === 'schedule') renderSchedule(container, ctx);
+    else if (page === 'applock') renderApplock(container, ctx);
+    else if (page === 'settings') renderSettings(container, ctx);
+  } catch (err) {
+    console.error('[renderPage] 页面渲染失败：', err);
+    container.innerHTML = `
+      <div class="page-header"><h1>页面加载失败</h1><p>渲染 '${esc(pageOf(currentRoute))}' 时出错</p></div>
+      <div class="card error-card" style="background:#fff5f5;border:1px solid #e0a6a6;color:#7a3b3b;padding:16px 18px;border-radius:8px;margin-top:12px;">
+        <p style="margin:0 0 8px;font-weight:700;">页面渲染出错</p>
+        <pre style="margin:0;white-space:pre-wrap;word-break:break-word;font-size:12px;background:rgba(0,0,0,.04);padding:10px;border-radius:6px;">${esc(err && (err.stack || err.message) ? err.stack || err.message : String(err))}</pre>
+        <p style="margin:10px 0 0;font-size:12px;opacity:.9;">请按 F12 → Console，把红色错误发给我以便定位。</p>
+      </div>
+    `;
+  }
 }
 
 /** 应用锁守卫：启用且本会话未解锁时，弹出全屏解锁层 */
