@@ -180,4 +180,13 @@ function init() {
   onProductsChange(refresh);
 }
 
-init();
+try {
+  init();
+} catch (err) {
+  console.error('[init] 启动失败：', err);
+  if (typeof window.showFatal === 'function') {
+    window.showFatal((err && (err.stack || err.message)) || String(err));
+  } else {
+    throw err;
+  }
+}

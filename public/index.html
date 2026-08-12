@@ -9,6 +9,50 @@
   <link rel="stylesheet" href="/css/extra.css" />
   <!-- Excel 导入导出（SheetJS，本地托管） -->
   <script src="/vendor/xlsx.full.min.js"></script>
+  <!-- 防白屏兜底：任何 JS 加载/运行错误都显示到页面，而不是空白 -->
+  <script>
+    (function () {
+      function escapeHtml(s) {
+        return String(s).replace(/[<>&]/g, function (c) {
+          return { '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c];
+        });
+      }
+      function showFatal(msg) {
+        var el = document.getElementById('fatalError');
+        if (!el) return;
+        el.style.display = 'flex';
+        el.innerHTML =
+          '<div class="fatal-card">' +
+          '<div class="fatal-title">⚠️ 页面脚本出错（已自动捕获，便于排查）</div>' +
+          '<pre class="fatal-msg">' + escapeHtml(msg) + '</pre>' +
+          '<div class="fatal-hint">排查方法：按 F12 → Console，把红色错误发给我即可定位。亦可尝试强制刷新（Ctrl+F5）清掉旧缓存。</div>' +
+          '</div>';
+      }
+      window.__fatalShown = false;
+      window.showFatal = showFatal;
+      window.addEventListener('error', function (e) {
+        if (window.__fatalShown) return;
+        window.__fatalShown = true;
+        var where = e && e.filename ? '\n@ ' + e.filename + ':' + (e.lineno || '?') : '';
+        showFatal((e && e.message ? e.message : '脚本加载/执行错误（可能是某个 JS 文件 404 或 MIME 被拦截）') + where);
+      }, true);
+      window.addEventListener('unhandledrejection', function (e) {
+        if (window.__fatalShown) return;
+        window.__fatalShown = true;
+        var r = e && e.reason ? (e.reason.stack || e.reason.message || e.reason) : '未知 Promise 拒绝';
+        showFatal('未处理的异步错误：\n' + r);
+      });
+      // 若 6 秒后主区仍为空（说明 app.js 没成功启动），给出提示而非白屏
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          var pc = document.getElementById('pageContent');
+          if (pc && !pc.childElementCount && !window.__fatalShown) {
+            showFatal('app.js 在 6 秒内未能渲染页面（可能模块加载失败或沙箱冷启动）。建议强制刷新，或把控制台错误发我。');
+          }
+        }, 6000);
+      });
+    })();
+  </script>
 </head>
 <body>
   <div id="app" class="app-shell">
@@ -34,13 +78,18 @@
     <!-- 主区域 -->
     <main class="main">
       <header class="topbar" id="topbar"></header>
-      <div class="page-content" id="pageContent"></div>
+      <div class="page-content" id="pageContent">
+        <div class="loading-placeholder">页面加载中…</div>
+      </div>
     </main>
   </div>
 
   <!-- 弹窗 / 轻提示 -->
   <div id="modalRoot"></div>
   <div id="toastRoot"></div>
+
+  <!-- 致命错误兜底层（默认隐藏） -->
+  <div id="fatalError" style="display:none"></div>
 
   <script type="module" src="/js/app.js"></script>
 </body>
