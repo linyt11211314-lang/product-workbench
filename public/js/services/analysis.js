@@ -159,6 +159,7 @@ export function analyzeProducts(rawRows, identities, today = new Date()) {
     skuCount: items.length,
     totalSales: items.reduce((t, i) => t + i.sales, 0),
     sales30: items.reduce((t, i) => t + i.sales30, 0),
+    totalRevenue: items.reduce((t, i) => t + i.revenue, 0),
     totalProfit: items.reduce((t, i) => t + i.profit, 0),
     negativeCount: items.filter((i) => i.profit <= 0).length,
   }));
@@ -178,9 +179,12 @@ export function analyzeProducts(rawRows, identities, today = new Date()) {
     kpis: {
       skuCount: products.length,
       matchedCount: products.filter((p) => p.name !== '待补充').length,
+      activeSku: products.filter((p) => p.sales > 0).length,
       totalSales: sum((p) => p.sales),
       sales30: sum((p) => p.sales30),
+      totalRevenue: sum((p) => p.revenue),
       totalProfit: sum((p) => p.profit),
+      totalAdSpend: sum((p) => p.adSpend),
       averageMargin: sum((p) => p.revenue) > 0 ? sum((p) => p.profit) / sum((p) => p.revenue) : 0,
       averageRefundRate: sum((p) => p.sales) > 0 ? sum((p) => p.refundCount) / sum((p) => p.sales) : 0,
       zeroSalesCount: products.filter((p) => p.sales === 0).length,
