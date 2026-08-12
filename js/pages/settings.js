@@ -4,6 +4,7 @@
 import { icon } from '../ui/icons.js';
 import { esc } from '../utils.js';
 import { getSettings, saveSettings, saveTheme, hasApiKey, maskedKey } from '../store/settingsStore.js';
+import { getLock, saveLock } from '../store/applockStore.js';
 import { DEEPSEEK_MODELS, AMAZON_SITES, PER_SITE_RATES } from '../config.js';
 import { testConnection } from '../services/aiProvider.js';
 import { toastSuccess, toastError, toastInfo } from '../ui/toast.js';
@@ -24,6 +25,7 @@ export function render(container, { rerender }) {
   const configured = hasApiKey();
   const keyValue = settings.apiKey || '';
   const qd = settings.quoteDefaults || { volWeightDivisor: 6000, sites: {} };
+  const lock = getLock();
 
   container.innerHTML = `
     <div class="settings-layout">
@@ -224,6 +226,24 @@ export function render(container, { rerender }) {
           <button class="btn btn-primary" data-backup-export>${icon('download')} 导出数据（JSON）</button>
           <button class="btn btn-soft" data-backup-import>${icon('upload')} 导入数据（JSON）</button>
         </div>
+      </div>
+
+      <div class="card card-pad">
+        <div class="section-head" style="margin-bottom:6px">
+          <div style="width:44px;height:44px;border-radius:14px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;color:var(--primary-deep)">${icon('lock')}</div>
+          <div>
+            <div class="section-title" style="font-size:16.5px">应用锁</div>
+            <div class="section-sub">开启后每次打开工作台需输入密码（轻量防旁观，本地非加密存储）</div>
+          </div>
+        </div>
+        <div class="row" style="gap:10px;align-items:center;margin-bottom:12px">
+          <label class="check"><input type="checkbox" id="al-enable" ${lock.enabled ? 'checked' : ''} /> 启用应用锁</label>
+        </div>
+        <div class="commission-grid">
+          <div><label class="form-label">设置密码</label><input class="input" id="al-pass" type="password" placeholder="${lock.enabled ? '留空不修改' : '4 位以上'}" /></div>
+          <div><label class="form-label">确认密码</label><input class="input" id="al-conf" type="password" placeholder="再次输入" /></div>
+        </div>
+        <button class="btn btn-primary btn-sm" id="al-save" style="margin-top:12px">${icon('save')} 保存</button>
       </div>
     </div>
   `;
@@ -462,4 +482,26 @@ export function render(container, { rerender }) {
     toastSuccess('已导出备份文件（JSON）到本地下载目录');
   });
   container.querySelector('[data-backup-import]').addEventListener('click', () => backupFileInput.click());
+
+  // ---------- 应用锁（从原独立页面移入设置） ----------
+  const alSave = container.querySelector('#al-save');
+  if (alSave) {
+    alSave.addEventListener('click', () => {
+      const enabled = container.querySelector('#al-enable').checked;
+      const pass = container.querySelector('#al-pass').value;
+      const conf = container.querySelector('#al-conf').value;
+      const cur = getLock();
+      if (enabled) {
+        if (cur.enabled && !pass) { saveLock({ enabled: true, passcode: cur.passcode }); toastSuccess('应用锁保持启用'); rerender(); return; }
+        if (pass.length < 4) { toastError('密码至少 4 位'); return; }
+        if (pass !== conf) { toastError('两次输入不一致'); return; }
+        saveLock({ enabled: true, passcode: pass });
+        toastSuccess('应用锁已启用');
+      } else {
+        saveLock({ enabled: false, passcode: cur.passcode });
+        toastSuccess('应用锁已关闭');
+      }
+      rerender();
+    });
+  }
 }
