@@ -12,21 +12,15 @@ import { render as renderHome } from './pages/home.js';
 import { render as renderLibrary } from './pages/library.js';
 import { render as renderListing } from './pages/listing.js';
 import { render as renderSettings } from './pages/settings.js';
-import { render as renderPricing } from './pages/pricing.js';
-import { render as renderCommission } from './pages/commission.js';
 import { render as renderAnalysis } from './pages/analysis.js';
 import { render as renderSchedule } from './pages/schedule.js';
-import { render as renderApplock } from './pages/applock.js';
 
 const NAV = [
   { id: 'home', label: '首页', icon: 'home' },
   { id: 'library', label: '选品库', icon: 'box' },
   { id: 'listing', label: 'AI Listing 工坊', icon: 'sparkles' },
-  { id: 'pricing', label: '智能定价', icon: 'target' },
   { id: 'analysis', label: '数据分析', icon: 'chart' },
-  { id: 'commission', label: '佣金计算', icon: 'briefcase' },
-  { id: 'schedule', label: '排期任务', icon: 'calendar' },
-  { id: 'applock', label: '应用锁', icon: 'lock' },
+  { id: 'schedule', label: '日程计划', icon: 'calendar' },
   { id: 'settings', label: '设置', icon: 'settings' },
 ];
 
@@ -34,18 +28,14 @@ const TITLES = {
   home: { title: '首页', sub: '拾光柠 · 产品开发工作台概览' },
   library: { title: '选品库', sub: '产品素材管理 · 一键导入 Listing 工坊' },
   listing: { title: 'AI Listing 工坊', sub: '亚马逊产品开发内容生成中心' },
-  pricing: { title: '智能定价', sub: 'AED 售价测算 · 体积重/佣金/广告/退货/VAT' },
   analysis: { title: '数据分析', sub: '领星/产品表现导入 · 店铺-SKU 表现与风险' },
-  commission: { title: '佣金计算', sub: 'AE/SA 双站点提成预测与薪酬规划' },
-  schedule: { title: '排期任务', sub: '今日任务与上新排期' },
-  applock: { title: '应用锁', sub: '轻量防旁观' },
+  schedule: { title: '日程计划', sub: '今日任务与上新排期' },
   settings: { title: '设置', sub: 'DeepSeek AI 服务与偏好' },
 };
 
 const PAGE_OF = {
   home: 'home', library: 'library', listing: 'listing', settings: 'settings',
-  pricing: 'pricing', commission: 'commission', analysis: 'analysis',
-  schedule: 'schedule', applock: 'applock',
+  analysis: 'analysis', schedule: 'schedule',
 };
 
 let currentRoute = 'home';
@@ -120,11 +110,8 @@ function renderPage() {
     if (page === 'home') renderHome(container, ctx);
     else if (page === 'library') renderLibrary(container, ctx);
     else if (page === 'listing') renderListing(container, currentRoute, ctx);
-    else if (page === 'pricing') renderPricing(container, ctx);
-    else if (page === 'commission') renderCommission(container, ctx);
-    else if (page === 'analysis') renderAnalysis(container, ctx);
+    else     if (page === 'analysis') renderAnalysis(container, ctx);
     else if (page === 'schedule') renderSchedule(container, ctx);
-    else if (page === 'applock') renderApplock(container, ctx);
     else if (page === 'settings') renderSettings(container, ctx);
   } catch (err) {
     console.error('[renderPage] 页面渲染失败：', err);
